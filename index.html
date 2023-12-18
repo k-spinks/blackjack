@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles/style.css">
+  <title>Blackjack</title>
+</head>
+<body>
+  <section class="top">
+    <h1 class="title">Blackjack</h1>
+    <p class="description">In blackjack, you're dealt two cards, aiming to get a hand close to 21 without going over. Decide whether to "hit" for another card or "stand" to keep your current total. The goal is to beat the dealer without busting. Aces are 11 and face cards are 10.</p>
+    <p class="alert-msg"></p>
+  </section>
+
+  <section class="casino-board">
+    <div class="play-area">
+      <div class="cards">
+        <div class="top-half">
+          <div class="house-wins">
+            <h4>House wins: <span class="house-wins">0</span></h4>
+          </div>
+          <div class="dealer-hand">
+           
+          </div>
+        </div>
+        <div class="message-area">
+          <h3 class="msg"></h3>
+        </div>
+        <div class="bottom-half">
+          <div class="player-wins">
+            <h4>Player wins: <span class="house-wins">0</span></h4>
+          </div>
+          <div class="player-hand">
+            
+          </div>
+
+          <div class="player-btns">
+            <button id="new-round-btn" class="new-round-btn">New Round</button>
+            <button id="hit-btn" class="hit-btn" disabled="disabled">Hit</button>
+            <button id="stand-btn" class="stand-btn" disabled="disabled">Stand</button>
+            <button id="reset-btn" class="reset-btn">Reset</button>
+          </div>
+      </div>
+      </div>
+    </div>
+    
+  </section>
+
+  <section class="bottom">
+    <div class="footer">
+      &copy; 2023 <a href="https://kevinspinks.netlify.app/" target="_blank"> Kevin Spinks</a>. All rights reserved.
+    </div>
+  </section>
+  <script src="./js/test.js"></script>
+  
+</body>
+</html>
+
+<!-- <img src="https://placehold.co/100x150" alt=""> -->

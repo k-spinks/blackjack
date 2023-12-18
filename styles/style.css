@@ -1,0 +1,107 @@
+:root {
+  --background-color: #1E5C3A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: black;
+  color: antiquewhite;
+}
+
+.top {
+  text-align: center;
+  margin: 0 auto;
+  padding: .5em;
+  font-size: 16px;
+  background: red;
+}
+
+.title {
+  margin: .5em 0;
+  font-size: 3em;
+}
+
+.description {
+  font-size: 1em;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.play-area {
+  margin: 2rem auto
+}
+
+.top-half {
+  display: flex;
+  flex-direction: column;
+  margin: 1.15rem auto 5rem;
+  widows: 100%;
+}
+
+.deck {
+  gap: -2rem;
+}
+
+/* .dealer-side {
+  margin: 1rem;
+  width: 100%;
+  gap:2rem;
+} */
+
+.bottom-half {
+  margin: 1.15rem auto;
+}
+
+.player-btns {
+  margin-top: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: start;
+  flex: 1;
+}
+
+
+.footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+  img,
+  .mock-img {
+  width: 110px;
+  margin: .25em;
+}
+
+@media screen and (max-width:700px){
+  .title {
+    font-size: 2em;
+  }
+  .description {
+    font-size: .9em;
+    width: 75%;
+  }
+  img {
+    width: 75px;
+  }
+}
+
+@media screen and (max-width:450px){
+  .top-half {
+    margin-bottom: 2rem;
+  }
+  img {
+    width: 52px;
+  }
+}
