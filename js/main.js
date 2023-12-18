@@ -161,7 +161,6 @@ function convertFace(faceVal){
 function calculateHandValue(drawnCardValue, keyName) {
   let currentVal = Number(localStorage.getItem(keyName))
   let newTotal = currentVal + drawnCardValue;
-
   localStorage.setItem(keyName, newTotal)
   return newTotal;
 }
