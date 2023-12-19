@@ -6,11 +6,12 @@ document.querySelector('.reset-btn').addEventListener('click', resetAll)
 document.querySelector('.player-wins').innerText ='Player wins: ' + localStorage.getItem('playerWins');
 document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem('houseWins')
 
-setStorage('playerHandValueStorage');
-setStorage('dealerHandValueStorage');
-setStorage('houseWins');
-setStorage('playerWins');
-setStorage('cardsDrawn');
+checkStorage('playerHandValueStorage');
+checkStorage('dealerHandValueStorage');
+checkStorage('houseWins');
+checkStorage('playerWins');
+checkStorage('cardsDrawn');
+
 
 //generates a deck and stores deck in 'deckId' in local storage
 if(!localStorage.getItem('deckId')){
@@ -40,7 +41,7 @@ if(!localStorage.getItem('deckId')){
 
 //checks if values are in local storage if not sets a new value
 
-function setStorage(keyName){
+function checkStorage(keyName){
   if(!localStorage.getItem(keyName)){
     localStorage.setItem(keyName, 0)
   }
@@ -52,69 +53,62 @@ function newRound () {
   const dealerArea = document.querySelector('.dealer-hand');
   const dealerHandValueData = 'dealerHandValueStorage'
   const playerHandValueData = 'playerHandValueStorage'
+  const firstdraw = true;
+  const cardsDrawn = 'cardsDrawn'
 
-  clearLocalStorage()
+  clearPlayerValue()
   deckCheck()
+  document.querySelector('.msg').innerText = ''
 
   for(let i = 0; i < Number(localStorage.getItem('cardsDrawn')); i++){
     removeFromHand(playerArea)
     removeFromHand(dealerArea)
   }
 
+  resetStorage(cardsDrawn)
+
   for (let i = 0; i < 2; i++) {
-    drawCard(playerArea, playerHandValueData);
-    drawCard(dealerArea, dealerHandValueData);
+    drawCard(playerArea, playerHandValueData, firstdraw);
+    drawCard(dealerArea, dealerHandValueData, firstdraw);
   }
-
-  if(hasBlackjack(playerHandValueData)){
-    document.getElementById('stand-btn').disabled = false;
-    document.getAnimations('hit-btn').disabled = true;
-    document.getElementById('new-round-btn').disabled = true;
-    console.log('Player Has Blackjack')
-  } 
-  if(hasBlackjack(dealerHandValueData)){
-    incrementValue(houseWins);
-    document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem(houseWins)
-  }
-
   document.getElementById('stand-btn').disabled = false;
   document.getElementById('new-round-btn').disabled = true;
   document.getElementById('hit-btn').disabled = false;
-  
 }
 
-function drawCard(playerHand, keyName) {
+function drawCard(playerHand, keyName, firstdraw) {
   const url = `https://www.deckofcardsapi.com/api/deck/${localStorage.getItem('deckId')}/draw/?count=1`
   fetch(url)
     .then(res => res.json()) // parse response as JSON
     .then(data => {
         const cardsDrawn = 'cardsDrawn'
         const card = data.cards[0];
+        const dealerHandValueData = 'dealerHandValueStorage'
+        const playerHandValueData = 'playerHandValueStorage'
+
         addToHand(card, playerHand);
         calculateHandValue(convertFace(card.value), keyName);
         incrementValue(cardsDrawn);
+        if(isBust(keyName)){
+          checkForWin(keyName);
+        }
+        if(hasBlackjack(keyName, firstdraw)){
+          blackjackMsg(keyName)
+        }
       })
       .catch(err => {
         console.log(`error ${err}`)
       });
 }
 
+
 //draw new card when on 'hit-btn'
 function hit () {
   const playerHandValueData = 'playerHandValueStorage'
   const playerHand = document.querySelector('.player-hand');
-  const houseWins = 'houseWins'
- 
-  if(isBust(playerHandValueData)) {
-    document.getElementById('hit-btn').disabled = true;
-    document.getElementById('stand-btn').disabled = true;
-    document.getElementById('new-round-btn').disabled = false;
-    alert('House wins!');
-    incrementValue(houseWins);
-    document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem(houseWins)
-  }else{
-    drawCard(playerHand, playerHandValueData); 
-  }
+  firstdraw = false;
+
+  drawCard(playerHand, playerHandValueData, firstdraw); 
 }
 
 
@@ -142,8 +136,18 @@ function isBust (currentVal) {
   return (Number(localStorage.getItem(currentVal)) > 21)
 }
 
-function hasBlackjack (currentVal) {
-  return (Number(localStorage.getItem(currentVal)) === 21)
+function hasBlackjack(currentVal, firstdraw) {
+  return (Number(localStorage.getItem(currentVal)) === 21 && firstdraw === true)
+}
+
+function blackjackMsg(keyName){
+  if(keyName === 'playerHandValueStorage'){
+    document.querySelector('.msg').innerText = 'You have blackjack!'
+    document.getElementById('hit-btn').disabled = true;
+    
+  }else if(keyName === 'dealerHandValueStorage'){
+    document.querySelector('.msg').innerText = 'Dealer has blackjack!'
+  }
 }
 
 //function to convert aces and face cards to num val
@@ -162,7 +166,6 @@ function calculateHandValue(drawnCardValue, keyName) {
   let currentVal = Number(localStorage.getItem(keyName))
   let newTotal = currentVal + drawnCardValue;
   localStorage.setItem(keyName, newTotal)
-  return newTotal;
 }
 
 //dealer draws cards in 'stand'
@@ -171,21 +174,23 @@ function stand () {
   const dealerArea = document.querySelector('.dealer-hand');
   const dealerHandValueData = 'dealerHandValueStorage'
   const playerHandValueData = 'playerHandValueStorage'
-  const playerWins = 'playerWins';
+  firstdraw = false;
 
-    if(!dealerCheck(dealerHandValueData) || !((Number(localStorage.getItem(dealerHandValueData))) > (Number(localStorage.getItem(playerHandValueData))))
-    && !isBust((dealerHandValueData))){
-      drawCard(dealerArea,dealerHandValueData);
-    }else if(isBust(dealerHandValueData)) {
-      document.getElementById('hit-btn').disabled = true;
-      document.getElementById('stand-btn').disabled = true;
-      document.getElementById('new-round-btn').disabled = false;
-      alert('You win!');
-      incrementValue(playerWins);
-      document.querySelector('.player-wins').innerText ='Player wins: ' + localStorage.getItem(playerWins)
-    }else{
+    if(dealerCheck(dealerHandValueData)){
       calculateWinner();
     }
+    else if(!((Number(localStorage.getItem(dealerHandValueData))) > (Number(localStorage.getItem(playerHandValueData)))))
+    {
+      drawCard(dealerArea,dealerHandValueData, firstdraw);
+    }
+}
+
+function checkForWin(keyName){
+  if(keyName === 'playerHandValueStorage'){
+    houseWins();
+  }else if(keyName === 'dealerHandValueStorage'){
+    playerWins();
+  }
 }
 
 function dealerCheck (dealerHandValueData) {
@@ -195,28 +200,20 @@ function dealerCheck (dealerHandValueData) {
 function calculateWinner() {
   const playerHandValueData = 'playerHandValueStorage'
   const dealerHandValueData = 'dealerHandValueStorage'
-  const playerWins = 'playerWins'
-  const houseWins = 'houseWins'
 
-  if (Number(localStorage.getItem(playerHandValueData)) > (Number(localStorage.getItem(dealerHandValueData))) && !isBust(playerHandValueData)) {
-    document.getElementById('hit-btn').disabled = true;
+  if (Number(localStorage.getItem(playerHandValueData)) > (Number(localStorage.getItem(dealerHandValueData)))) {
+    playerWins();
+  } else if(Number(localStorage.getItem(playerHandValueData)) < (Number(localStorage.getItem(dealerHandValueData)))){
+    houseWins();
+  }else if (Number(localStorage.getItem(playerHandValueData)) === (Number(localStorage.getItem(dealerHandValueData)))){
+    document.querySelector('.msg').innerText = 'It\'s\ a draw!'
     document.getElementById('stand-btn').disabled = true;
     document.getElementById('new-round-btn').disabled = false;
-    alert('You win!');
-    incrementValue(playerWins)
-    document.querySelector('.player-wins').innerText ='Player wins: ' + localStorage.getItem(playerWins)
-  } else {
-    alert('House wins!');
-    document.getElementById('hit-btn').disabled = true;
-    document.getElementById('stand-btn').disabled = true;
-    document.getElementById('new-round-btn').disabled = false;
-    incrementValue(houseWins)
-    document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem(houseWins)
   }
 }
 
 //clears local storage for a new round
-function clearLocalStorage() {
+function clearPlayerValue() {
   localStorage.setItem('playerHandValueStorage', 0)
   localStorage.setItem('dealerHandValueStorage', 0)
 }
@@ -245,6 +242,26 @@ function deckCheck(){
       .catch(err => {
         console.log(`error ${err}`)
       });
+}
+
+function houseWins() {
+  const houseWins = 'houseWins'
+  document.getElementById('hit-btn').disabled = true;
+  document.getElementById('stand-btn').disabled = true;
+  document.getElementById('new-round-btn').disabled = false;
+  document.querySelector('.msg').innerText = 'House Win!'
+  incrementValue(houseWins);
+  document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem(houseWins)
+}
+
+function playerWins(){
+  const playerWins = 'playerWins'
+  document.getElementById('hit-btn').disabled = true;
+  document.getElementById('stand-btn').disabled = true;
+  document.getElementById('new-round-btn').disabled = false;
+  document.querySelector('.msg').innerText = 'You Win!'
+  incrementValue(playerWins);
+  document.querySelector('.player-wins').innerText ='Player wins: ' + localStorage.getItem(playerWins)
 }
 
 function resetAll () {
