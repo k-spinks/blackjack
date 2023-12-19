@@ -36,15 +36,13 @@ body {
   margin: 1.25rem auto
 }
 
-.top-half {
+.top-half, .bottom-half {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: .5rem auto 1.75rem;
-  widows: 100%;
-}
-
-.bottom-half {
-  margin: 1.15rem auto;
+  width: 100%;
 }
 
 .player-btns {
@@ -53,6 +51,9 @@ body {
   text-align: center;
 }
 
+button {
+  margin-left: 5px;
+}
 
 .cards {
   display: flex;

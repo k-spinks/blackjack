@@ -2,6 +2,7 @@ document.querySelector('.new-round-btn').addEventListener('click', newRound)
 document.querySelector('.hit-btn').addEventListener('click', hit)
 document.querySelector('.stand-btn').addEventListener('click', stand)
 document.querySelector('.reset-btn').addEventListener('click', resetAll)
+
 document.querySelector('.player-wins').innerText ='Player wins: ' + localStorage.getItem('playerWins');
 document.querySelector('.house-wins').innerText ='House wins: ' + localStorage.getItem('houseWins')
 
