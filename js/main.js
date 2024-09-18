@@ -108,7 +108,7 @@ function hit () {
   const playerHand = document.querySelector('.player-hand');
   firstdraw = false;
 
-  drawCard(playerHand, playerHandValueData, firstdraw); 
+  drawCard(playerHand, playerHandValueData, firstdraw);
 }
 
 
@@ -131,7 +131,7 @@ function removeFromHand(playerHand) {
   }
 }
 
-//checks for bust 
+//checks for bust
 function isBust (currentVal) {
   return (Number(localStorage.getItem(currentVal)) > 21)
 }
@@ -144,7 +144,6 @@ function blackjackMsg(keyName){
   if(keyName === 'playerHandValueStorage'){
     document.querySelector('.msg').innerText = 'You have blackjack!'
     document.getElementById('hit-btn').disabled = true;
-    
   }else if(keyName === 'dealerHandValueStorage'){
     document.querySelector('.msg').innerText = 'Dealer has blackjack!'
   }
@@ -161,7 +160,7 @@ function convertFace(faceVal){
     }
 }
 
-//calculate current player values 
+//calculate current player values
 function calculateHandValue(drawnCardValue, keyName) {
   let currentVal = Number(localStorage.getItem(keyName))
   let newTotal = currentVal + drawnCardValue;
